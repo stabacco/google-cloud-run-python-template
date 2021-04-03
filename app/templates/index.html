@@ -66,14 +66,14 @@
 
 
   function handleTokenRefresh() {
-    return FIREBASE_MESSAGING.getToken().then(
+    return messaging.getToken().then(
         (token) => {
-        console.log("Got a token dog ", token, token == 'frx2IAlOhBPPpo4x7uHfOX:APA91bFuet5ldR5E49QU8A8htwwb8izD4yDqL-_LmqdZW9sspMY9ymq6n8W72XNJK0snF4JoDa2qA6j7OzYHZrbDnEEsG_eBAZ9Jw-_ueVk9UlcyX6TSTSUMB0ndb3jfXcP5kGtghvRJ');
+        console.log("Got a token dog ", token);
     });
   }
 
-  const FIREBASE_MESSAGING = firebase.messaging();
-  const permission = FIREBASE_MESSAGING.requestPermission()
+  const messaging= firebase.messaging();
+  const permission = messaging.requestPermission()
   .then(
       () => handleTokenRefresh()
   ).catch(
@@ -85,7 +85,7 @@
           console.log("on Message received:", payload)
       }
   }
-  );
+);
 
 
 </script>
