@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simply Notify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/app/static/css/reset.css">
+  <link rel="stylesheet" href="/app/static/css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <main>
+      <header>
+        <h1>Notifications tests</h1>
+        <p><em>A simple application to send notifications to everyone subscribed. It's simple. It's useless. It's simply notify.</em></p>
+      </header>
+      
+      <button id="sign-in">Sign In</button>
+      <button id="sign-out" hidden>Sign Out</button>
+
+      <button id="subscribe" hidden>
+        Subscribe
+        <img src="/img/bell.png" alt="Notifications">
+      </button>
+      <button id="unsubscribe" hidden>
+        Unsubscribe
+        <img src="/img/bell.png" alt="Notifications">
+      </button>
+
+      <form id="send-notification-form" hidden>
+        <label class="sr-only" for="notification-message">Notification Message</label>
+        <div>
+          <textarea id="notification-message" maxlength="40" placeholder="What would you like to say?"></textarea>
+          <button type="submit" id="send-notification" aria-label="Send">
+            <img src="/app/static/img/send.png" alt="">
+          </button>
+        </div>
+      </form>
+    </main>
+
+  </div>
+
+  <!-- Firebase SDK -->
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js"></script>
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyAktNMg9BSj6waQvJBIZHvU52qBPRBWZIk",
+    authDomain: "notifications-test-stefano.firebaseapp.com",
+    projectId: "notifications-test-stefano",
+    storageBucket: "notifications-test-stefano.appspot.com",
+    messagingSenderId: "707914582679",
+    appId: "1:707914582679:web:011c79c9b6dd3330fcb7d2",
+    measurementId: "G-GRZSQ1P02K"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  // firebase.analytics();
+
+
+  function handleTokenRefresh() {
+    return FIREBASE_MESSAGING.getToken().then(
+        (token) => {
+        console.log("Got a token dog ", token, token == 'frx2IAlOhBPPpo4x7uHfOX:APA91bFuet5ldR5E49QU8A8htwwb8izD4yDqL-_LmqdZW9sspMY9ymq6n8W72XNJK0snF4JoDa2qA6j7OzYHZrbDnEEsG_eBAZ9Jw-_ueVk9UlcyX6TSTSUMB0ndb3jfXcP5kGtghvRJ');
+    });
+  }
+
+  const FIREBASE_MESSAGING = firebase.messaging();
+  const permission = FIREBASE_MESSAGING.requestPermission()
+  .then(
+      () => handleTokenRefresh()
+  ).catch(
+      console.log("No permissions allowed.")
+  )
+
+  messaging.onMessage((payload) => {
+       {
+          console.log("on Message received:", payload)
+      }
+  }
+  );
+
+
+</script>
+
+</body>
+</html>
