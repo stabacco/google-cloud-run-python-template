@@ -7,6 +7,7 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY ./app .
 
+ENV GOOGLE_APPLICATION_CREDENTIALS "/app/cred.json"
 # Install production dependencies.
 RUN pip install --no-cache-dir -r requirements.txt
 
