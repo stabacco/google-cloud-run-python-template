@@ -61,7 +61,7 @@ def send_task():
     project = 'kubernetes-test-302803'
     queue = 'yfinance-update-queue'
     location = 'australia-southeast1'
-    url = 'https://example.com/task_handler'
+    url = '/task-run'
     service_account_email = 'cloud-tasker@kubernetes-test-302803.iam.gserviceaccount.com';
     payload = 'hello'
 
@@ -70,9 +70,9 @@ def send_task():
 
     # Construct the request body.
     task = {
-        "http_request": {  # Specify the type of request.
+        "app_engine_http_request": {  # Specify the type of request.
             "http_method": tasks_v2.HttpMethod.POST,
-            "url": url,  # The full url path that the task will be sent to.
+            "relative_uri": url,  # The full url path that the task will be sent to.
             "oidc_token": {"service_account_email": service_account_email},
         }
     }
@@ -88,8 +88,12 @@ def send_task():
     response = client.create_task(request={"parent": parent, "task": task})
 
     print("Created task {}".format(response.name))
-    return response
+    return "created"
 
+   
+@app.route('/task-run')
+def send_task():
+    return {"this": "that"}
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 80)))
