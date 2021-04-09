@@ -91,12 +91,12 @@ def send_task():
     return ("Created task {}".format(response.name))
 
    
-@app.route('/task-run', methods=['POST'])
+@app.route('/task-run', methods=['GET', 'POST'])
 def task_run():
     import logging
     # logging.error('bad stuff')
     # raise RuntimeError('was called')
-    
+
     with open('deleteme.txt', 'w') as f:
         f.write('you should delete me.')
 
