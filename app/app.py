@@ -90,59 +90,33 @@ def send_task():
     print("Created task {}".format(response.name))
     return ("Created task {}".format(response.name))
 
-   
-@app.route('/task-run', methods=['GET', 'POST'])
-def task_run():
-    import logging
-    # logging.error('bad stuff')
-    # raise RuntimeError('was called')
 
-    from flask import request
+from functools import wraps
+from flask import request
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
-    token = request.headers.get('Authorization')
-
-    if not token:
-        return {"error": "not authenticated"}, 401
-
-    token = token.replace('Bearer ', '')
-
-    from google.oauth2 import id_token
-    from google.auth.transport import requests
-    CLIENT_ID = 'https://google-cloud-run-python-template-o6yadma6ta-ew.a.run.app/task-run'
-    certs_url='https://www.googleapis.com/oauth2/v1/certs'
-    idinfo = id_token.verify_oauth2_token(token, requests.Request(), ) # CLIENT_ID)
-    raise RuntimeError(idinfo)
-    return idinfo
-
-    # (Receive token by HTTPS POST)
-    # ...
-
-    try:
-        # Specify the CLIENT_ID of the app that accesses the backend:
+def verify_service_account_token(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
         
+        try:
+            token = request.headers.get('Authorization')
+            if not token:
+                return {"error": "not authenticated"}, 401
 
-        # Or, if multiple clients access the backend server:
-        # idinfo = id_token.verify_oauth2_token(token, requests.Request())
-        # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-        #     raise ValueError('Could not verify audience.')
+            token = token.replace('Bearer ', '')
+            id_token.verify_oauth2_token(token, requests.Request(), ) 
+        except ValueError:
+            return {"error": "not authenticated"}, 401
 
-        # If auth request is from a G Suite domain:
-        # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-        #     raise ValueError('Wrong hosted domain.')
+        return func(*args, **kwargs)
+    return wrapper
 
-        # ID token is valid. Get the user's Google Account ID from the decoded token.
-        userid = idinfo['sub']
-    except ValueError:
-        # Invalid token
-        pass
-
-    return tuple(dir(request.headers))
-
-
-    with open('deleteme.txt', 'w') as f:
-        f.write('you should delete me.')
-
-    return {"this": "that"}
+@app.route('/task-run', methods=['GET', 'POST'])
+@verify_service_account_token
+def task_run():
+    return {"all": "good"}
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 80)))
