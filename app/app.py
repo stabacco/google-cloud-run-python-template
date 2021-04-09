@@ -73,7 +73,7 @@ def send_task():
         "app_engine_http_request": {  # Specify the type of request.
             "http_method": tasks_v2.HttpMethod.POST,
             "relative_uri": url,  # The full url path that the task will be sent to.
-            "oidc_token": {"service_account_email": service_account_email},
+            #"oidc_token": {"service_account_email": service_account_email},
         }
     }
 
