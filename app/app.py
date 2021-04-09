@@ -92,7 +92,7 @@ def send_task():
 
    
 @app.route('/task-run')
-def send_task():
+def task_run():
     return {"this": "that"}
 
 if __name__ == "__main__":
