@@ -3,9 +3,9 @@ services:
   python:
     build: .
     environment:
-      - PORT=${PORT}
-      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATIONS_CREDENTIALS}
-      - FCM_KEY=${FCM_KEY}
+      PORT: ${PORT}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+      FCM_KEY: ${FCM_KEY}
     ports:
       - "80:${PORT}"
     volumes:
