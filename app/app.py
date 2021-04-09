@@ -72,7 +72,7 @@ def send_task():
     task = {
         "http_request": {  # Specify the type of request.
             "http_method": tasks_v2.HttpMethod.POST,
-            "uri": url,  # The full url path that the task will be sent to.
+            "url": url,  # The full url path that the task will be sent to.
             "oidc_token": {"service_account_email": service_account_email},
         }
     }
