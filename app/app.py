@@ -88,14 +88,14 @@ def send_task():
     response = client.create_task(request={"parent": parent, "task": task})
 
     print("Created task {}".format(response.name))
-    return "created"
+    return ("Created task {}".format(response.name))
 
    
 @app.route('/task-run')
 def task_run():
     import logging
-    logging.error('bad stuff')
-    raise RuntimeError('was called')
+    # logging.error('bad stuff')
+    # raise RuntimeError('was called')
     return {"this": "that"}
 
 if __name__ == "__main__":
