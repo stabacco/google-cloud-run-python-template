@@ -82,7 +82,7 @@ def send_task():
         converted_payload = payload.encode()
 
         # Add the payload to the request.
-        task["http_request"]["body"] = converted_payload
+        task["app_engine_http_request"]["body"] = converted_payload
 
     # Use the client to build and send the task.
     response = client.create_task(request={"parent": parent, "task": task})
