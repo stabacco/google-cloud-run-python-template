@@ -96,6 +96,7 @@ def task_run():
     import logging
     # logging.error('bad stuff')
     # raise RuntimeError('was called')
+    import time;time.sleep(4)
     return {"this": "that"}
 
 if __name__ == "__main__":
