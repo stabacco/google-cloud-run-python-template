@@ -98,17 +98,10 @@ def task_run():
     # raise RuntimeError('was called')
 
     from flask import request
+
+    raise RuntimeError(request.headers)
     return (request.headers)
 
-    from google.oauth2 import id_token
-    import google.auth
-    import google.auth.transport.requests
-
-    target_audience = 'https://myapp-6w42z6vi3q-uc.a.run.app'
-    certs_url='https://www.googleapis.com/oauth2/v1/certs'
-    idt='<YOURIDTOKEN>'
-    request = google.auth.transport.requests.Request()
-    print id_token.verify_token(idt,request,certs_url=certs_url)
 
     with open('deleteme.txt', 'w') as f:
         f.write('you should delete me.')
