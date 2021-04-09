@@ -62,7 +62,7 @@ def send_task():
     queue = 'yfinance-update-queue'
     location = 'australia-southeast1'
     url = 'https://example.com/task_handler'
-    service_account_email = 'cloud-tasker@pro-trader-308409.iam.gserviceaccount.com';
+    service_account_email = 'cloud-tasker@kubernetes-test-302803.iam.gserviceaccount.com';
     payload = 'hello'
 
     # Construct the fully qualified queue name.
