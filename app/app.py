@@ -61,7 +61,7 @@ def send_task():
     project = 'kubernetes-test-302803'
     queue = 'yfinance-update-queue'
     location = 'australia-southeast1'
-    url = '/task-run'
+    url = 'https://google-cloud-run-python-template-o6yadma6ta-ew.a.run.app/task-run'
     service_account_email = 'cloud-tasker@kubernetes-test-302803.iam.gserviceaccount.com';
     payload = 'hello'
 
@@ -70,10 +70,10 @@ def send_task():
 
     # Construct the request body.
     task = {
-        "app_engine_http_request": {  # Specify the type of request.
+        "http_request": {  # Specify the type of request.
             "http_method": tasks_v2.HttpMethod.POST,
-            "relative_uri": url,  # The full url path that the task will be sent to.
-            #"oidc_token": {"service_account_email": service_account_email},
+            "uri": url,  # The full url path that the task will be sent to.
+            "oidc_token": {"service_account_email": service_account_email},
         }
     }
 
@@ -82,7 +82,7 @@ def send_task():
         converted_payload = payload.encode()
 
         # Add the payload to the request.
-        task["app_engine_http_request"]["body"] = converted_payload
+        task["http_request"]["body"] = converted_payload
 
     # Use the client to build and send the task.
     response = client.create_task(request={"parent": parent, "task": task})
