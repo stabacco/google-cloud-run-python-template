@@ -107,7 +107,7 @@ def task_run():
 
     from google.oauth2 import id_token
     from google.auth.transport import requests
-    CLIENT_ID = 'https://google-cloud-run-python-template-o6yadma6ta-ew.a.run.app'
+    CLIENT_ID = 'https://google-cloud-run-python-template-o6yadma6ta-ew.a.run.app/task-run'
     certs_url='https://www.googleapis.com/oauth2/v1/certs'
     idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
     return idinfo
