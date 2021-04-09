@@ -50,7 +50,7 @@ def send_notification():
     click_action='/confirm-received/message-id',message_title=message_title, message_body=message_body, data_message=data_message)
     return jsonify(result)
    
-@app.route('/send-task', methods = ['POST'])
+@app.route('/send-task', methods = ['GET'])
 def send_task():
     from google.cloud import tasks_v2
 
@@ -91,7 +91,7 @@ def send_task():
     return ("Created task {}".format(response.name))
 
    
-@app.route('/task-run')
+@app.route('/task-run', methods=['POST'])
 def task_run():
     import logging
     # logging.error('bad stuff')
