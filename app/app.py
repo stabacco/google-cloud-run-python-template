@@ -1,8 +1,9 @@
 import os, urllib.request, json
 
 from flask import Flask, send_from_directory, jsonify
-from flask.helpers import send_file
+from flask.helpers import get_load_dotenv, send_file
 
+get_load_dotenv()
 
 def render_template(template_name: str, render_kwargs: "Dict[Any, Any]"):
     import jinja2
@@ -27,26 +28,68 @@ def send_js(path):
     return send_from_directory('js', path)
 
 
-@app.route('/confirm-received')
-def confirm_received():
-    return "yes baby"
+@app.route('/confirm-received/<target_id>')
+def confirm_received(target_id):
+    return f"yes baby i received the notification about {target_id}"
 
 @app.route('/send-notifications')
 def send_notification():
     from pyfcm import FCMNotification
-    client = FCMNotification(api_key='AAAApNL_Spc:APA91bFiPwQpZOpODWg08WuaA0qcA9jknHagr5ZxPvmR7lf3upwDXCH_LUP0rJ5L2FN3If11GRTKgIh1dvzW3gKXO2WmuFiQLaPV0jO7Ohdmjegllpk5FjXYwRGepoTJAFRiNcWF-Cx4')
+    client = FCMNotification(api_key=os.getenv('FCM_KEY'))
     data_message = {
     "Nick" : "Mario",
     "body" : "great match!",
     "Room" : "PortugalVSDenmark"
     }
 
-    registration_id = 'fQGho5eSP2oAaNMFBB41o7:APA91bH3Pf6w8c2h70EDjvU1hYnw9wVm_ZiFfD1zHnoaVtxH0Vswc9K8sADimLk0KVBMmTkm0XeBubB1-k4Lg-44Yx8m_YUFlYbd-RqceFF7Fo0prSGQCyVX_pSj7KS0WJUS2eyS10Nf'
+    registration_id = 'frx2IAlOhBPPpo4x7uHfOX:APA91bFuet5ldR5E49QU8A8htwwb8izD4yDqL-_LmqdZW9sspMY9ymq6n8W72XNJK0snF4JoDa2qA6j7OzYHZrbDnEEsG_eBAZ9Jw-_ueVk9UlcyX6TSTSUMB0ndb3jfXcP5kGtghvRJ'
     message_title = "Johnny likes your comment"
     message_body = "Hi john, someone likes your comment"
-    result = client.notify_single_device(registration_id=registration_id, low_priority=True, click_action='/confirm-received',message_title=message_title, message_body=message_body, data_message=data_message)
+    result = client.notify_single_device(registration_id=registration_id, 
+    badge='https://skodel.com/static/logo-093f845aca56eaa157a5dbc5f8179f02.png', low_priority=True, 
+    click_action='/confirm-received/message-id',message_title=message_title, message_body=message_body, data_message=data_message)
     return jsonify(result)
    
+@app.route('/send-task')
+def send_task():
+    from google.cloud import tasks_v2
+
+    # Create a client.
+    client = tasks_v2.CloudTasksClient()
+
+    # TODO(developer): Uncomment these lines and replace with your values.
+    project = 'kubernetes-test-302803'
+    queue = 'yfinance-update-queue'
+    location = 'australia-southeast1'
+    url = 'https://example.com/task_handler'
+    service_account_email = 'cloud-tasker@pro-trader-308409.iam.gserviceaccount.com';
+    payload = 'hello'
+
+    # Construct the fully qualified queue name.
+    parent = client.queue_path(project, location, queue)
+
+    # Construct the request body.
+    task = {
+        "http_request": {  # Specify the type of request.
+            "http_method": tasks_v2.HttpMethod.POST,
+            "url": url,  # The full url path that the task will be sent to.
+            "oidc_token": {"service_account_email": service_account_email},
+        }
+    }
+
+    if payload is not None:
+        # The API expects a payload of type bytes.
+        converted_payload = payload.encode()
+
+        # Add the payload to the request.
+        task["http_request"]["body"] = converted_payload
+
+    # Use the client to build and send the task.
+    response = client.create_task(request={"parent": parent, "task": task})
+
+    print("Created task {}".format(response.name))
+    return response
+
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 80)))

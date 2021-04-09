@@ -15,6 +15,7 @@ var firebaseConfig = {
   const messaging = firebase.messaging();
 
   messaging.setBackgroupMessageHandler((payload) => {
+    
       const title = 'Hello world';
       const options = {
           body: payload.data.status
