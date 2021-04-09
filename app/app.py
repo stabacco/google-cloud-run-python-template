@@ -50,7 +50,7 @@ def send_notification():
     click_action='/confirm-received/message-id',message_title=message_title, message_body=message_body, data_message=data_message)
     return jsonify(result)
    
-@app.route('/send-task', methods = ['GET'])
+@app.route('/send-task', methods = ['POST'])
 def send_task():
     from google.cloud import tasks_v2
 
@@ -71,7 +71,7 @@ def send_task():
     # Construct the request body.
     task = {
         "http_request": {  # Specify the type of request.
-            "http_method": tasks_v2.HttpMethod.GET,
+            "http_method": tasks_v2.HttpMethod.POST,
             "url": url,  # The full url path that the task will be sent to.
             "oidc_token": {"service_account_email": service_account_email},
         }
