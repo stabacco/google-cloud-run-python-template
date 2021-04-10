@@ -117,19 +117,104 @@ def verify_service_account_token(func):
 
             token = token.replace('Bearer ', '')
             t = id_token.verify_oauth2_token(token, requests.Request(), )
-            raise RuntimeError(t)
         except ValueError:
             return {"error": "not authenticated"}, 401
         
         return func(*args, **kwargs)
     return wrapper
 
-@app.route('/task-run', methods=['GET', 'POST'])
+@app.route('/task-run', methods=['GET','POST'])
 @verify_service_account_token
 def task_run():
-    import logging
-    logging.warning("all good, no worry")
-    return {"all": "good"}
+
+
+    import yfinance as yf
+
+
+
+    def download_tickers(tickers):
+        # tickers = list(set(options["tickers"]))
+        interval = "1d"
+        start = '2000-01-01'
+
+        data = yf.download(
+            " ".join(tickers),
+            start=start,
+            interval=interval,
+            prepost=False,
+            auto_adjust=True,
+            group_by='ticker',
+        )
+
+        import pickle
+        with open("temp.pkl", 'wb') as f:
+            pickle.dump(data.dropna().tz_localize(None), f)
+
+        upload_pickle_to_gcloud("temp.pkl")
+
+
+
+
+    def upload_pickle_to_gcloud(pkl_file):
+        # from google.oauth2 import service_account
+        from google.cloud import storage
+        # credentials = service_account.Credentials.from_service_account_file(
+        # './key.json')
+        client = storage.Client() # (credentials=credentials, project="pro-trader")
+        bucket = client.get_bucket('skodel-dump-db')
+        blob = bucket.blob('yahoofinance.pkl')
+        return blob.upload_from_file(pkl_file, 
+        content_type='application/octet-stream')
+
+
+# def _save_to_datastore(dataframe, ticker_name, datastore_client):
+
+#     # The kind for the new entity
+#     kind = 'Ticker'
+#     # The name/ID for the new entity
+
+#     task_key = datastore_client.key(kind, ticker_name)
+
+#     task = datastore.Entity(key=task_key)
+#     task['Date'] = dataframe.index.to_list()
+#     # print('saving %s' % task['Date'])
+#     for column_name in dataframe.columns:
+#         data = dataframe[column_name].to_list()
+#         # print(column_name)
+#         task[column_name] = data
+
+#     # return task
+#     # Saves the entity
+#     datastore_client.put(task)
+
+#     print(f'Saved {task.key.name}')
+
+
+# def read_from_datastore():
+#     datastore_client = datastore.Client()
+#     query = datastore_client.query(kind='Ticker')
+#     data = query.fetch()
+    
+#     for d in data:
+#         date = d.pop('Date')
+#         df = pd.DataFrame(index=date, data = d)
+#         yield d.key.name, df
+
+    def save_data(event, context):
+
+        # import pandas as pd
+        # df = pd.read_json("/home/stabacco/projects/pro-trader/ingest/stocks.json")
+
+        # _save_to_datastore(df)
+        from yahoo_fin import stock_info as si
+
+        tickers = si.tickers_sp500()
+        # print(tickers)
+        download_tickers(tickers)
+    # print(list(read_from_datastore()))
+    # print(df['Close'])
+    save_data(None, None)
+    return {"saved": "data"}
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 80)))
