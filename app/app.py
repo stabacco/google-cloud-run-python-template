@@ -53,6 +53,8 @@ def send_notification():
 @app.route('/send-task', methods = ['GET'])
 def send_task():
     from google.cloud import tasks_v2
+    from google.protobuf import timestamp_pb2
+    import datetime
 
     # Create a client.
     client = tasks_v2.CloudTasksClient()
@@ -64,6 +66,7 @@ def send_task():
     url = 'https://google-cloud-run-python-template-o6yadma6ta-ew.a.run.app/task-run'
     service_account_email = 'cloud-tasker@kubernetes-test-302803.iam.gserviceaccount.com';
     payload = 'hello'
+    schedule_time = datetime.datetime.now() + datetime.timedelta(hours=2)
 
     # Construct the fully qualified queue name.
     parent = client.queue_path(project, location, queue)
@@ -84,6 +87,13 @@ def send_task():
         # Add the payload to the request.
         task["http_request"]["body"] = converted_payload
 
+    if schedule_time:
+        # Create Timestamp protobuf.
+        timestamp = timestamp_pb2.Timestamp()
+        timestamp.FromDatetime(schedule_time)
+
+        # Add the timestamp to the tasks.
+        task["schedule_time"] = timestamp
     # Use the client to build and send the task.
     response = client.create_task(request={"parent": parent, "task": task})
 
@@ -116,6 +126,8 @@ def verify_service_account_token(func):
 @app.route('/task-run', methods=['GET', 'POST'])
 @verify_service_account_token
 def task_run():
+    import logging
+    logging.warning("all good, no worry")
     return {"all": "good"}
 
 if __name__ == "__main__":
