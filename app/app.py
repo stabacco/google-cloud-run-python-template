@@ -116,10 +116,11 @@ def verify_service_account_token(func):
                 return {"error": "not authenticated"}, 401
 
             token = token.replace('Bearer ', '')
-            id_token.verify_oauth2_token(token, requests.Request(), ) 
+            t = id_token.verify_oauth2_token(token, requests.Request(), )
+            raise RuntimeError(t)
         except ValueError:
             return {"error": "not authenticated"}, 401
-
+        
         return func(*args, **kwargs)
     return wrapper
 
