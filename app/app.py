@@ -126,11 +126,7 @@ def verify_service_account_token(func):
 @app.route('/task-run', methods=['GET','POST'])
 @verify_service_account_token
 def task_run():
-
-
     import yfinance as yf
-
-
 
     def download_tickers(tickers):
         # tickers = list(set(options["tickers"]))
@@ -151,8 +147,6 @@ def task_run():
             pickle.dump(data.dropna().tz_localize(None), f)
 
         upload_pickle_to_gcloud("temp.pkl")
-
-
 
 
     def upload_pickle_to_gcloud(pkl_file):
