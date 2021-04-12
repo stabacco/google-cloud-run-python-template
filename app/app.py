@@ -157,8 +157,7 @@ def task_run():
         client = storage.Client() # (credentials=credentials, project="pro-trader")
         bucket = client.get_bucket('skodel-dump-db')
         blob = bucket.blob('yahoofinance.pkl')
-        return blob.upload_from_file(pkl_file, 
-        content_type='application/octet-stream')
+        return blob.upload_from_file(pkl_file,)
 
 
 # def _save_to_datastore(dataframe, ticker_name, datastore_client):
@@ -203,6 +202,7 @@ def task_run():
         from yahoo_fin import stock_info as si
 
         tickers = si.tickers_sp500()
+        tickers = ['MSFT', "TSLA", "GOOG"]
         # print(tickers)
         download_tickers(tickers)
     # print(list(read_from_datastore()))
