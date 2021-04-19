@@ -168,7 +168,7 @@ def task_run():
         from yahoo_fin import stock_info as si
 
         tickers = si.tickers_sp500()
-        tickers = ['MSFT', "TSLA", "GOOG"]
+        # tickers = ['MSFT', "TSLA", "GOOG"]
         # print(tickers)
         download_tickers(tickers)
     # print(list(read_from_datastore()))
