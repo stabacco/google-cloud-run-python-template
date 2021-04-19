@@ -143,55 +143,21 @@ def task_run():
         )
 
         import pickle
-        with open("temp.pkl", 'wb') as f:
-            pickle.dump(data.dropna().tz_localize(None), f)
 
-        upload_pickle_to_gcloud("temp.pkl")
+        d = pickle.dumps(data)
+
+        upload_pickle_to_gcloud(d)
 
 
-    def upload_pickle_to_gcloud(pkl_file):
-        # from google.oauth2 import service_account
+    def upload_pickle_to_gcloud(pkl_bytes):
         from google.cloud import storage
         # credentials = service_account.Credentials.from_service_account_file(
         # './key.json')
         client = storage.Client() # (credentials=credentials, project="pro-trader")
         bucket = client.get_bucket('skodel-dump-db')
         blob = bucket.blob('yahoofinance.pkl')
-        return blob.upload_from_file(pkl_file,)
+        return blob.upload_from_string(pkl_bytes, content_type='application/octet-stream')
 
-
-# def _save_to_datastore(dataframe, ticker_name, datastore_client):
-
-#     # The kind for the new entity
-#     kind = 'Ticker'
-#     # The name/ID for the new entity
-
-#     task_key = datastore_client.key(kind, ticker_name)
-
-#     task = datastore.Entity(key=task_key)
-#     task['Date'] = dataframe.index.to_list()
-#     # print('saving %s' % task['Date'])
-#     for column_name in dataframe.columns:
-#         data = dataframe[column_name].to_list()
-#         # print(column_name)
-#         task[column_name] = data
-
-#     # return task
-#     # Saves the entity
-#     datastore_client.put(task)
-
-#     print(f'Saved {task.key.name}')
-
-
-# def read_from_datastore():
-#     datastore_client = datastore.Client()
-#     query = datastore_client.query(kind='Ticker')
-#     data = query.fetch()
-    
-#     for d in data:
-#         date = d.pop('Date')
-#         df = pd.DataFrame(index=date, data = d)
-#         yield d.key.name, df
 
     def save_data(event, context):
 
